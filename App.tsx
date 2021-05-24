@@ -1,22 +1,47 @@
-// A react native typescript app
-// that displays a list of fruits and their prices
-// the user can add a fruit and its price to the list,
-// can search for a particular fruit type
 
-// It's incomplete. I'm still working on it. 
+import React, { FC, useState, useEffect } from 'react';
+import { StyleSheet, Text, View, SafeAreaView, FlatList } from 'react-native';
+import Input from './input';
+import { Fruit, Fruits } from './data';
+import Item from './listitem';
 
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+const App: FC = () => {
+  const [ searchquery, setSearchQuery ] = useState<string>("");
+  const [ fruits, setFruits ] = useState<Fruit[] | null>(null);
 
-export default function App() {
+  useEffect(() => {
+    (() => {
+      setFruits(Fruits);
+    })();
+  }, []);
+  
+  const handleSearch = (text: string) => {
+    const fruits: Fruit[] = Fruits.filter(fruit => fruit.name.includes(text));
+    setFruits(fruits);
+  };
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.container}>
+        <Input 
+          icon = "md-search"
+          placeholder = "Search"
+          onChangeText = {(text) => handleSearch(text)}
+        />
+        <FlatList 
+          data={fruits} 
+          renderItem={({ item }) => ( 
+            <Item id={item.id} 
+            name={item.name} 
+            price={item.price}
+            />
+          )} 
+        />
+      </View>
+    </SafeAreaView>
   );
-}
+};
+export default App;
 
 const styles = StyleSheet.create({
   container: {
